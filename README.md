@@ -8,5 +8,5 @@ A small browser game created with ChatGPT.
 
 Run:
 
-npm install -g http-server
+npm install -g http-server  
 http-server
