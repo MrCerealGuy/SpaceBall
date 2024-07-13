@@ -15,6 +15,9 @@ let gameStarted = false;
 
 const minAsteroids = 5; // Set a minimum number of asteroids
 
+const textureLoader = new THREE.TextureLoader();
+const platformTexture = textureLoader.load('platform_texture.jpg');
+
 function startGame() {
     document.getElementById('splash-screen').style.display = 'none';
     gameStarted = true;
@@ -43,19 +46,10 @@ function init() {
     ball.position.y = 2.5; // Starting position above the visible screen
     scene.add(ball);
 
-    // Create platforms
+    // Create initial platforms
     platforms = [];
-    for (let i = 0; i < platformCount; i++) {
-        const platformGeometry = new THREE.BoxGeometry(1, 0.1, 1);
-        const platformMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-        const platform = new THREE.Mesh(platformGeometry, platformMaterial);
-        platform.position.x = (Math.random() - 0.5) * 10;
-        platform.position.y = (i + 1) * -1.5;
-        platform.dx = (Math.random() - 0.5) * platformSpeed;
-        scene.add(platform);
-        platforms.push(platform);
-    }
-
+	createPlatforms();
+	
     // Create stars
     stars = [];
     for (let i = 0; i < starCount; i++) {
@@ -72,19 +66,7 @@ function init() {
     // Create asteroids
     asteroids = [];
     const asteroidCount = Math.floor(Math.random() * maxAsteroids);
-    for (let i = 0; i < asteroidCount; i++) {
-        const asteroidGeometry = new THREE.SphereGeometry(0.1, 12, 12);
-        const asteroidMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
-        const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
-        asteroid.position.x = (Math.random() - 0.5) * 20;
-        asteroid.position.y = (Math.random() - 0.5) * 20;
-        asteroid.dx = (Math.random() - 0.5) * 0.1;
-        asteroid.dy = (Math.random() - 0.5) * 0.1;
-        scene.add(asteroid);
-        asteroids.push(asteroid);
-    }
-	
-	spawnAsteroids();
+	spawnAsteroids(minAsteroids);
 
     // Create clock for animation
     clock = new THREE.Clock();
@@ -104,6 +86,19 @@ function init() {
     console.log('Platforms:', platforms);
     console.log('Stars:', stars);
     console.log('Asteroids:', asteroids);
+}
+
+function createPlatforms() {
+    for (let i = 0; i < 5; i++) {
+        const platformGeometry = new THREE.BoxGeometry(1, 0.1, 1);
+        const platformMaterial = new THREE.MeshBasicMaterial({ map: platformTexture });
+        const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+        platform.position.x = (Math.random() - 0.5) * 10;
+        platform.position.y = (Math.random() - 0.5) * -5;
+        platform.dx = (Math.random() - 0.5) * platformSpeed;
+        scene.add(platform);
+        platforms.push(platform);
+    }
 }
 
 function onKeyDown(event) {
@@ -187,14 +182,7 @@ function animate() {
                 asteroids.splice(asteroidIndex, 1);
 
                 // Spawn a new platform
-                const platformGeometry = new THREE.BoxGeometry(1, 0.1, 1);
-                const platformMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-                const newPlatform = new THREE.Mesh(platformGeometry, platformMaterial);
-                newPlatform.position.x = (Math.random() - 0.5) * 10;
-                newPlatform.position.y = -1.5;
-                newPlatform.dx = (Math.random() - 0.5) * platformSpeed;
-                scene.add(newPlatform);
-                platforms.push(newPlatform);
+                spawnPlatform();
 
                 // Spawn a new asteroid
                 spawnAsteroids(1);
@@ -228,6 +216,17 @@ function animate() {
     }
 
     renderer.render(scene, camera);
+}
+
+function spawnPlatform() {
+    const platformGeometry = new THREE.BoxGeometry(1, 0.1, 1);
+    const platformMaterial = new THREE.MeshBasicMaterial({ map: platformTexture });
+    const newPlatform = new THREE.Mesh(platformGeometry, platformMaterial);
+    newPlatform.position.x = (Math.random() - 0.5) * 10;
+    newPlatform.position.y = -1.5;
+    newPlatform.dx = (Math.random() - 0.5) * platformSpeed;
+    scene.add(newPlatform);
+    platforms.push(newPlatform);
 }
 
 function resetGame() {
