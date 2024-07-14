@@ -6,7 +6,9 @@ A small browser game created with ChatGPT.
 
 ![SpaceBall](screenshot_2.jpg)
 
-Run:
+Install:
+winget install -e --id OpenJS.NodeJS
+npm install -g http-server 
 
-npm install -g http-server  
+Run: 
 http-server
