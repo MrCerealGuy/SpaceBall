@@ -16,7 +16,19 @@ let gameStarted = false;
 const minAsteroids = 5; // Set a minimum number of asteroids
 
 const textureLoader = new THREE.TextureLoader();
-const platformTexture = textureLoader.load('platform_texture.jpg');
+const platformTexture = textureLoader.load('res/platform_texture.jpg');
+
+const explosionSound = new Howl({
+    src: ['res/explosion.mp3']
+});
+
+const hitSound = new Howl({
+    src: ['res/hit.mp3']
+});
+
+const gameOverSound = new Howl({
+    src: ['res/gameover.mp3']
+});
 
 function startGame() {
     document.getElementById('splash-screen').style.display = 'none';
@@ -155,6 +167,9 @@ function animate() {
             ball.position.y > platform.position.y - 0.1 &&
             ballVelocityY <= 0 // Ensure the ball is falling downwards when checking for collision
         ) {
+			// Play hit sound
+            hitSound.play();
+			
             ballVelocityY = bounceVelocity;
             ball.position.y = platform.position.y + 0.2; // Prevent clipping through the platform
             score++;
@@ -175,6 +190,9 @@ function animate() {
                 asteroid.position.y > platform.position.y - 0.1 &&
                 asteroid.position.y < platform.position.y + 0.1
             ) {
+				// Play explosion sound
+                explosionSound.play();
+				
                 // Remove the platform and asteroid
                 scene.remove(platform);
                 scene.remove(asteroid);
@@ -211,6 +229,9 @@ function animate() {
 
     // Check if the ball has fallen off the screen
     if (ball.position.y < -5) {
+		// Play game over sound
+        gameOverSound.play();
+		
         alert('Game Over!');
         resetGame();
     }
